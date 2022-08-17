@@ -1,4 +1,4 @@
-import * as ActionType from './ActionType'
+import * as AT from '../reducer/ActionType'
 
 const initVal = {
     counter: 0,
@@ -7,10 +7,10 @@ const initVal = {
 console.log();
 export const counterReducer = (state = initVal, action) => {
     switch(action.type){
-        case ActionType.INCREMENT:
+        case AT.INCREMENT:
             return { counter : state.counter + 1};
             break;
-        case ActionType.DECREMENT:
+        case AT.DECREMENT:
             return { counter : state.counter - 1};
             break;
             default: return state;
