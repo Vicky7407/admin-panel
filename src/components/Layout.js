@@ -16,11 +16,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+// import InboxIcon from "@mui/icons-material/MoveToInbox";
+// import MailIcon from "@mui/icons-material/Mail";
 import MedicationIcon from "@mui/icons-material/Medication";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
 import { NavLink } from "react-router-dom";
+import { HourglassEmpty } from "@mui/icons-material";
 
 
 const drawerWidth = 240;
@@ -107,7 +109,7 @@ export default function Layout({ children }) {
   const menuItems = [
     { label: "medicine", to: "/medicine", icon: <MedicationIcon /> },
     { label: "patients", to: "/patients", icon: <AccessibilityIcon /> },
-    { label: "counter", to: "/counter", icon: <AccessibilityIcon /> },
+    { label: "counter", to: "/counter", icon: <HourglassBottomIcon /> },
   ];
 
   return (
@@ -189,7 +191,7 @@ export default function Layout({ children }) {
                     px: 2.5,
                   }}
                 >
-                  <ListItemIcon
+                  {/* <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: open ? 3 : "auto",
@@ -197,7 +199,7 @@ export default function Layout({ children }) {
                     }}
                   >
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
+                  </ListItemIcon> */}
                   <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>

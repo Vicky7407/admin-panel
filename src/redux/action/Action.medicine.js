@@ -3,6 +3,7 @@ import * as AT from '../reducer/ActionType'
 import { BASE_URL } from '../Share/Url'
 
 
+
 export const Medicinedata = () => (dispatch) =>{
       try{
         dispatch(LoadingMD(LoadingMD))
@@ -11,25 +12,25 @@ export const Medicinedata = () => (dispatch) =>{
           getAllMedicinesData()
           .then((data) =>dispatch({type : AT.GET_MEDICINE, payload:data.data}))
           .catch((error) =>dispatch(errorMD(error.message)))
-          // .catch((error) =>dispatch(errorMD(error.message)))
-          // fetch(BASE_URL + "posts")
-          // .then((response) => {
-          //   if (response.ok) {
-          //     return response;
-          //   } else {
-          //     var error = new Error('An Error occurred ' + response.status + ': ' + response.statusText);
-          //     error.response = response;
-          //     throw error;
-          //   }
-          // },
-          //   error => {
-          //     var errmess = new Error(error.message);
-          //     throw errmess;
-          //   })
+          .catch((error) =>dispatch(errorMD(error.message)))
+          fetch(BASE_URL + "posts")
+          .then((response) => {
+            if (response.ok) {
+              return response;
+            } else {
+              var error = new Error('An Error occurred ' + response.status + ': ' + response.statusText);
+              error.response = response;
+              throw error;
+            }
+          },
+            error => {
+              var errmess = new Error(error.message);
+              throw errmess;
+            })
           
-          // .then((response) => response.json())
-          // .then((data) =>dispatch({type : AT.GET_MEDICINE, payload:data}))
-          // .catch((error) =>dispatch(errorMD(error.message)))
+          .then((response) => response.json())
+          .then((data) =>dispatch({type : AT.GET_MEDICINE, payload:data}))
+          .catch((error) =>dispatch(errorMD(error.message)))
         }, 2000)
       }
       catch(error){
@@ -41,28 +42,28 @@ export const AddData = (data) => (dispatch) => {
      try{
         addMedicineData(data)
         .then((data) =>dispatch({type :AT.ADD_MEDICINE, payload:data.data}))
-        // fetch(BASE_URL + "posts",{
-        //   method:"POST",
-        //   body:JSON.stringify(data),
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        // })
-        // .then((response) => {
-        //   if (response.ok) {
-        //     return response;
-        //   } else {
-        //     var error = new Error('An Error occurred ' + response.status + ': ' + response.statusText);
-        //     error.response = response;
-        //     throw error;
-        //   }
-        // },
-        //   error => {
-        //     var errmess = new Error(error.message);
-        //     throw errmess;
-        //   })
-        // .then((response) => response.json())
-        // .then((data) =>dispatch({type :AT.ADD_MEDICINE, payload:data}))
+        fetch(BASE_URL + "posts",{
+          method:"POST",
+          body:JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          if (response.ok) {
+            return response;
+          } else {
+            var error = new Error('An Error occurred ' + response.status + ': ' + response.statusText);
+            error.response = response;
+            throw error;
+          }
+        },
+          error => {
+            var errmess = new Error(error.message);
+            throw errmess;
+          })
+        .then((response) => response.json())
+        .then((data) =>dispatch({type :AT.ADD_MEDICINE, payload:data}))
      }catch(error){
         dispatch(errorMD(error.message))
      }

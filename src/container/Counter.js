@@ -8,7 +8,7 @@ function Counter(props) {
 
     const handleInc = () =>{
         dispatch(increment())
-    }
+    }                   
     const handleDec = () =>{
         dispatch(decrement())
     }

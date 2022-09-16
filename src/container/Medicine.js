@@ -48,6 +48,7 @@ function Medicine(props) {
   };
   const loadData = () => {
     let localData = JSON.parse(localStorage.getItem("data"));
+    console.log("data",localData)
     if (localData !== null) {
       setData(localData);
     }
@@ -173,7 +174,7 @@ function Medicine(props) {
 
   const { errors, handleBlur, handleChange, handleSubmit, touched,values } = formikObj;
   const c = useSelector(state=>state.counter);
-  // const Medicine=useSelector(state => state.Medicine);
+  
   return (
   <>
     {

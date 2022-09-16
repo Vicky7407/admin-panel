@@ -1,6 +1,4 @@
-import logo from './logo.svg';
 import './App.css';
-
 import { Route, Switch } from 'react-router-dom';
 import Medicine from './container/Medicine';
 import Patients from './container/Patients';
