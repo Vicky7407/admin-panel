@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import { React, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -8,313 +7,302 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as yup from "yup";
-import { Form, Formik, useFormik } from "formik";
-import { DataGrid, renderActionsCell } from "@mui/x-data-grid";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
+import { useFormik, Form, Formik } from "formik";
+import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from '@mui/icons-material/Edit';
-import {useSelector,useDispatch} from 'react-redux';
-import { AddData, DeleteData, Medicinedata, UpdateData } from "../redux/action/Action.medicine";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import { autocompleteClasses } from "@mui/material";
 
-function Medicine(props) {
+export default function FormDialog() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [alertData, setAlertData] = useState(0);
+
+  const [editData, setEditData] = useState(false);
+
   const [dopen, setDOpen] = useState(false);
-  const [did,setDid]=useState(0);
-  const [update,setUpdate] =useState(false);
-  const [searchdata,setSearchData] = useState([]);
- 
+  const [filterData, setFilterData] = useState([]);
   const handleClickOpen = () => {
     setOpen(true);
   };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditData(false);
+    formik.resetForm();
+  };
+
   const handleDClickOpen = () => {
     setDOpen(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+
+  const handleDClose = () => {
     setDOpen(false);
-    // setUpdate(false);
-    formikObj.resetForm();
   };
-
-  const handleDelete = (params) => {
-    let handledelete = JSON.parse(localStorage.getItem("data"));
-    // let Deletedata = handledelete.filter((i) => i.id !==did);
-    // localStorage.setItem("data", JSON.stringify(Deletedata));
-    dispatch(DeleteData(did))
-    loadData();
-    handleClose();
-  };
-  const loadData = () => {
-    let localData = JSON.parse(localStorage.getItem("data"));
-    console.log("data",localData)
-    if (localData !== null) {
-      setData(localData);
-    }
-  
-  };
-
   let schema = yup.object().shape({
-    Name: yup.string().required("Enter Medicine name"),
+    name: yup.string().required("Please enter name"),
     price: yup
-      .number()
-      .required("Enter medicine price")
-      .positive("price can't be negative"),
-    Quantity: yup.string().required("Enter Quantity"),
-    Expiry: yup.string().required("Enter Expiry date"),
-    // createdOn: yup.date().default(function () {
-    //   return new Date();
-    // }),
+      .number("Please enter valid price")
+      .required("Please enter price")
+      .positive("price cant be in negative"),
+    expiry: yup.string().required("Please enter expiry"),
+    quantity: yup.string().required("Please enter quantity"),
   });
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      price: "",
+      expiry: "",
+      quantity: "",
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      handleClose();
+      if (editData) {
+        updateData(values);
+      } else {
+        toStorage(values);
+      }
+      loadData(values);
+    },
+  });
+  const { handleSubmit, handleChange, errors, handleBlur, touched, values } =
+    formik;
 
-  // to local storage
-  const handleData = (values) => {
-    let localdata = JSON.parse(localStorage.getItem("data"));
-    let id = Math.floor(Math.random() * 1000);
-    const addId = {
+  //to local storage
+  const toStorage = (values) => {
+    const localData = JSON.parse(localStorage.getItem("medicine"));
+
+    const id = Math.floor(Math.random() * 1000);
+
+    let withIdData = {
       id: id,
       ...values,
     };
-    dispatch(AddData(addId));
-    // if (localdata === null) {
-    //   localStorage.setItem("data", JSON.stringify([addId]));
-    // } else {
-    //   localdata.push(addId);
-    //   localStorage.setItem("data", JSON.stringify(localdata));
-    // }
-    formikObj.resetForm();
-    handleClose();
+
+    if (localData === null) {
+      localStorage.setItem("medicine", JSON.stringify([withIdData]));
+    } else {
+      localData.push(withIdData);
+      localStorage.setItem("medicine", JSON.stringify(localData));
+    }
   };
 
-  const handleEdit =(params) =>{
-    handleClickOpen();
-    formikObj.setValues(params.row);
-    updateData(values);
-    setUpdate(true);
-  }
-  const updateData = (values) =>{
-    let localdata = JSON.parse(localStorage.getItem("data"));
-  //   const uData=localdata.map((l) =>{
-  //     if(l.id===values.id){
-  //      return values;
-  //     }else{
-  //      return l;
-  //     }
-  //  });
-   dispatch(UpdateData(values))
-   loadData();
-   setUpdate(false);
-  }
-   const dispatch = useDispatch()
-   const medicine = useSelector(state => state.Medicine)
-  useEffect(() => {
-    // const data = JSON.parse(localStorage.getItem("data"));
-    // if (data) {
-    //   setData(data);
-    // }
-    dispatch(Medicinedata())
-  }, []);
-  const formikObj = useFormik({
-    initialValues: {
-      Name: "",
-      price: "",
-      Quantity: "",
-      Expiry: "",
-    },
-    validationSchema: schema,
-    onSubmit: (values , action) => {
-        if(update){
-          updateData(values);
-        }else{
-          handleData(values);
-        }
-      loadData();
-      handleClose();
-    },
-  });
-
-  const Searchdata=(val) =>{
-     let Medicinedata=JSON.parse(localStorage.getItem("data"));
-
-     let  filterData=Medicinedata.filter((item) =>(
-      item.Name.toLowerCase().includes(val.toLowerCase())||
-      item.price.toString().includes(val)||
-      item.Quantity.toString().includes(val)||
-      item.Expiry.toString().includes(val)
-     ))
-      // console.log(filterData);
-     setSearchData(filterData);
-  }
-  const SearchData=searchdata.length > 0 ? searchdata
-        :data;
+  // table
   const columns = [
-    { field: "Name", headerName: "Medicine Name", width: 150 },
-    { field: "price", headerName: "Price", width: 150 },
-    { field: "Quantity", headerName: "Quantity", width: 150 },
-    { field: "Expiry", headerName: "Expiry", width: 150 },
+    { field: "id", headerName: "ID", width: 100 },
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "price", headerName: "Price", width: 80 },
+    { field: "expiry", headerName: "Expiry", width: 80 },
+    { field: "quantity", headerName: "Quantity", width: 80 },
     {
-      field: "Action",
-      headerName: "Action",
-      width: 150,
+      field: "manage",
+      headerName: "Manage",
+      width: 80,
       renderCell: (params) => (
-        <div>
-        <Box>
-          <Button onClick={() => {handleEdit(params)}}>
-             <EditIcon />
-          </Button>
-          <Button color="error" onClick={() =>{ handleDClickOpen(params); setDid(params.id); }}>
+        <>
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              handleDClickOpen();
+              setAlertData(params.id);
+            }}
+          >
             <DeleteIcon />
-          </Button>
-        </Box>
-        </div>
+          </IconButton>
+
+          <IconButton aria-label="edit" onClick={() => editFormOpen(params)}>
+            <EditIcon />
+          </IconButton>
+        </>
       ),
     },
   ];
 
-  const { errors, handleBlur, handleChange, handleSubmit, touched,values } = formikObj;
-  const c = useSelector(state=>state.counter);
-  
+  const loadData = () => {
+    const localData = JSON.parse(localStorage.getItem("medicine"));
+
+    if (localData !== null) {
+      setData(localData);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const deletFunction = (params) => {
+    let localData = JSON.parse(localStorage.getItem("medicine"));
+    let fData = localData.filter((i) => i.id !== alertData);
+
+    setData(localData);
+
+    localStorage.setItem("medicine", JSON.stringify(fData));
+    loadData();
+    handleDClose();
+  };
+
+  const editFormOpen = (params) => {
+    handleClickOpen();
+    formik.setValues(params.row);
+    setEditData(true);
+  };
+
+  const updateData = (values) => {
+    let localData = JSON.parse(localStorage.getItem("medicine"));
+    console.log(values);
+
+    const uData = localData.map((nd) => {
+      if (nd.id === values.id) {
+        return values;
+      } else {
+        return nd;
+      }
+    });
+    localStorage.setItem("medicine", JSON.stringify(uData));
+
+    handleClose();
+    loadData();
+    setEditData(false);
+  };
+
+  const handleSearch = (val) => {
+    let localData = JSON.parse(localStorage.getItem("medicine"));
+
+    let searchData = localData.filter(
+      (d) =>
+        d.name.toLowerCase().includes(val.toLowerCase()) ||
+        d.expiry.toString().includes(val) ||
+        d.price.toString().includes(val) ||
+        d.quantity.toString().includes(val)
+    );
+
+    setFilterData(searchData);
+  };
+
+  let filterdata = filterData.length > 0 ? filterData : data;
   return (
-  <>
-    {
-      medicine.isLoading?
-        <p style={{textAlign:"center"}}> Stay tuned ....</p>
-        :
-      medicine.error !==''?
-        <p>{medicine.error}</p> 
-        :
-      <div>
-        <h1>Working on:{c.counter}</h1>
-        <h2>Medicine.</h2>
-        <Box sx={{ m: 1}}>
-          <Stack direction="row" spacing={2}>
+    <div className="container">
+      <div className="row">
+        <h1>Medicine</h1>
+        <div className="d-flex mb-4 align-items-center">
+          <div className="col-6">
             <Button variant="outlined" onClick={handleClickOpen}>
-              Add Medicine
+              List medicine
             </Button>
-            <TextField sx={{width:500,}}
-                  margin="dense"
-                  name="Name"
-                  label="Search"
-                  type="text"
-                  fullWidth
-                  variant="filled"
-                  id="filled-basic"
-                  onChange={(e) => Searchdata(e.target.value)}
-                />
-          </Stack>
-        </Box>
-        <div style={{ height: 400, width: "100%" }}>
+          </div>
+          <div className="col-4">
+            <TextField
+              className="d-block"
+              name="search"
+              label="Search"
+              type="text"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div style={{ height: 400, width: "90%" }}>
           <DataGrid
-            rows={medicine.MD}
+            rows={filterdata}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
             checkboxSelection
           />
         </div>
-        <Dialog open={open} onClose={handleClose} fullWidth>
-          <Formik values={formikObj}>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>List medicine</DialogTitle>
+          <Formik values={formik}>
             <Form onSubmit={handleSubmit}>
-              <DialogTitle>Add Medicine</DialogTitle>
               <DialogContent>
-                {/* <DialogContentText></DialogContentText> */}
                 <TextField
-                  value={values.Name}
                   margin="dense"
-                  name="Name"
+                  name="name"
                   label="Name"
                   type="text"
                   fullWidth
                   variant="standard"
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  value={values.name}
                 />
-                {errors.name && touched.name ? (
-                  <p style={{ color: "red" }}>{errors.name}</p>
-                ) : (
-                  ""
-                )}
+                {touched.name && errors.name ? (
+                  <span className="error">{errors.name}</span>
+                ) : null}
+
                 <TextField
-                  value={values.price}
                   margin="dense"
                   name="price"
-                  label="price"
-                  type="number"
+                  label="Price"
+                  type="text"
                   fullWidth
                   variant="standard"
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  value={values.price}
                 />
-                {errors.price && touched.price ? (
-                  <p style={{ color: "red" }}>{errors.price}</p>
-                ) : (
-                  ""
-                )}
+                {touched.price && errors.price ? (
+                  <span className="error">{errors.price}</span>
+                ) : null}
                 <TextField
-                  value={values.Quantity}
                   margin="dense"
-                  name="Quantity"
-                  label="Quantity"
-                  type="number"
-                  fullWidth
-                  variant="standard"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.Quantity && touched.Quantity ? (
-                  <p style={{ color: "red" }}>{errors.Quantity}</p>
-                ) : (
-                  ""
-                )}
-                <TextField
-                  value={values.Expiry}
-                  margin="dense"
-                  name="Expiry"
+                  name="expiry"
                   label="Expiry"
-                  type="number"
+                  type="text"
                   fullWidth
                   variant="standard"
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  value={values.expiry}
                 />
-                {errors.Expiry && touched.Expiry ? (
-                  <p style={{ color: "red" }}>{errors.Expiry}</p>
-                ) : (
-                  ""
-                )}
+                {touched.expiry && errors.expiry ? (
+                  <span className="error">{errors.expiry}</span>
+                ) : null}
+
+                <TextField
+                  margin="dense"
+                  name="quantity"
+                  label="Quantity"
+                  type="text"
+                  fullWidth
+                  variant="standard"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.quantity}
+                />
+                {touched.quantity && errors.quantity ? (
+                  <span className="error">{errors.quantity}</span>
+                ) : null}
+                <DialogActions>
+                  <Button onClick={handleClose}>Cancel</Button>
+                  {editData === true ? (
+                    <Button type="submit" onClick={() => updateData()}>
+                      Change
+                    </Button>
+                  ) : (
+                    <Button type="submit">Add</Button>
+                  )}
+                </DialogActions>
               </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                {
-                  update?
-                  <Button type="submit">Update</Button>
-                  :
-                  <Button type="submit">Add</Button>
-                }
-                
-              </DialogActions>
             </Form>
           </Formik>
         </Dialog>
         <Dialog
           open={dopen}
+          // TransitionComponent={Transition}
+          keepMounted
           onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-describedby="alert-dialog-slide-description"
         >
-          <DialogTitle id="alert-dialog-title">
-            {"Are you sure want to delete?"}
-          </DialogTitle>
+          <DialogTitle>{"Are you sure?"}</DialogTitle>
           <DialogActions>
-            <Button onClick={handleClose}>No</Button>
-            <Button onClick={handleDelete}>Yes</Button>
+            <Button onClick={handleDClose}>no</Button>
+            <Button onClick={deletFunction}>yes</Button>
           </DialogActions>
         </Dialog>
       </div>
-    }
-  </>
+    </div>
   );
 }
-
-export default Medicine;
