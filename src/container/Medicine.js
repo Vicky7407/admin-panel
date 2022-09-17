@@ -19,11 +19,10 @@ import { AddData, DeleteData, Medicinedata, UpdateData } from "../redux/action/A
 
 function Medicine(props) {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState([]);
+  const [ setData] = useState([]);
   const [dopen, setDOpen] = useState(false);
   const [did,setDid]=useState(0);
   const [update,setUpdate] =useState(false);
-  const [searchdata,setSearchData] = useState([]);
   const [medicineData, setMedicineData] = useState([])
  
   const handleClickOpen = () => {
