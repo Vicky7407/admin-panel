@@ -38,36 +38,7 @@ export const Medicinedata = () => (dispatch) =>{
       }
 }
 
-export const AddData = (data) => (dispatch) => {
-     try{
-        addMedicineData(data)
-        .then((data) =>dispatch({type :AT.ADD_MEDICINE, payload:data.data}))
-        fetch(BASE_URL + "posts",{
-          method:"POST",
-          body:JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          if (response.ok) {
-            return response;
-          } else {
-            var error = new Error('An Error occurred ' + response.status + ': ' + response.statusText);
-            error.response = response;
-            throw error;
-          }
-        },
-          error => {
-            var errmess = new Error(error.message);
-            throw errmess;
-          })
-        .then((response) => response.json())
-        .then((data) =>dispatch({type :AT.ADD_MEDICINE, payload:data}))
-     }catch(error){
-        dispatch(errorMD(error.message))
-     }
-}
+cl
 
 export const DeleteData = (id) => (dispatch) =>{
   console.log(id);
