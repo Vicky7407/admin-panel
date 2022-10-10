@@ -16,6 +16,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import {useSelector,useDispatch} from 'react-redux';
 import { AddData, DeleteData, Medicinedata, UpdateData } from "../redux/action/Action.medicine";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { addMedicineData } from "../common/apis/medicine.apis";
 
 function Medicine(props) {
   const [open, setOpen] = useState(false);
@@ -77,7 +78,7 @@ function Medicine(props) {
       id: id,
       ...values,
     };
-    dispatch(AddData(addId));
+    dispatch(addMedicineData(addId));
     // if (localdata === null) {
     //   localStorage.setItem("data", JSON.stringify([addId]));
     // } else {

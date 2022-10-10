@@ -1,19 +1,12 @@
 {
   "posts": [
     {
-      "id": 703,
+      "id": 522,
       "Name": "vinay",
       "price": 12,
       "Quantity": 11,
       "Expiry": 1,
       "Pro_pic": {}
-    },
-    {
-      "id": 806,
-      "Name": "vicky",
-      "price": 11,
-      "Quantity": 11,
-      "Expiry": 11
     }
   ]
 }

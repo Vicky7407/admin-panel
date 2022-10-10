@@ -38,7 +38,7 @@ export const Medicinedata = () => (dispatch) =>{
       }
 }
 
-cl
+
 
 export const DeleteData = (id) => (dispatch) =>{
   console.log(id);
